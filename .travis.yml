@@ -1,39 +1,14 @@
 sudo: false
 language: node_js
 cache: npm
-jobs:
-  include:
-  - stage: Test
-    before_test: echo "Running tests against $(node -v)..."
-    node_js: '8'
-  - stage: Test
-    before_test: echo "Running tests against $(node -v)..."
-    node_js: '10'
-  - stage: Test
-    before_test: echo "Running tests against $(node -v)..."
-    node_js: '11'
-  - stage: Deploy
-    node_js: '11'
-    script: skip
-    before_deploy:
-      - npm run build
-    deploy:
-      - provider: npm
-        email: marcus.cemes@epfl.ch
-        api_key:
-          secure: dSCSxwCcLuITk/mGw2GohIdlwLypuG6RkSodB9cV/wDkTWkuvn3N/7TXU/awfq2exd9KRuD98BsY77ZjFfBjinc+63YzmvkNNU0NBw2Nsdmsp7yzZ/Bbzw1Ds40XiGnKgMSG23D5bNJfgmJt3yQuqupmD8Bc+2XZelS3zOYuPYrCMQTMD8Lko4qJSb6AtDVz/QdjzCyg4k7XCwza3852Tpyg3Qoxg5SFl2EIGSltkIJU5Xnf87mPmlM9yVG9ilDgoaWuioBv6tLjKxSZgZOoGTf2wVxEVxJf07XPdmRj5Q5WyPXjFiBX73lVXpZQdsWBpJzIullNju/L0WjDKYnvUrYueta4Usu0NDNSUEXqWpGsvP4veFWcsyBUW1IICya0n5bz2y2zzpfzSHljfP2KnTw6KVfLiZYjkO0D8wD902hhpBDFcT1WVNwchU+BHh9Zh4gCIzs58fVC5GQL5zOKISSDHy+bzblJjl1S9PTr1JVy6JzKl9jkBJjDKEY4dWgSxHTo8xiVxtYpHOXMxmZDKM3RuCnZHaUtb1m9aD9U46jqU0+hX9TiZlCxcBoGylypLtWBeFu8iavBoXHR8s8FLWb1bjwoezcM4Qp0PV8Xwm4SHRUt1v+YNFSpfzuTlFw3kseybGTwAt7vXv3k1+5S7oMqTRppyUuCPY2Wrb2WHTY=
-        skip_cleanup: true
-        on:
-          tags: true
-          # Deploy under @latest if it's a normal version number
-          condition: $TRAVIS_TAG =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$
-      - provider: npm
-        email: marcus.cemes@epfl.ch
-        api_key:
-          secure: dSCSxwCcLuITk/mGw2GohIdlwLypuG6RkSodB9cV/wDkTWkuvn3N/7TXU/awfq2exd9KRuD98BsY77ZjFfBjinc+63YzmvkNNU0NBw2Nsdmsp7yzZ/Bbzw1Ds40XiGnKgMSG23D5bNJfgmJt3yQuqupmD8Bc+2XZelS3zOYuPYrCMQTMD8Lko4qJSb6AtDVz/QdjzCyg4k7XCwza3852Tpyg3Qoxg5SFl2EIGSltkIJU5Xnf87mPmlM9yVG9ilDgoaWuioBv6tLjKxSZgZOoGTf2wVxEVxJf07XPdmRj5Q5WyPXjFiBX73lVXpZQdsWBpJzIullNju/L0WjDKYnvUrYueta4Usu0NDNSUEXqWpGsvP4veFWcsyBUW1IICya0n5bz2y2zzpfzSHljfP2KnTw6KVfLiZYjkO0D8wD902hhpBDFcT1WVNwchU+BHh9Zh4gCIzs58fVC5GQL5zOKISSDHy+bzblJjl1S9PTr1JVy6JzKl9jkBJjDKEY4dWgSxHTo8xiVxtYpHOXMxmZDKM3RuCnZHaUtb1m9aD9U46jqU0+hX9TiZlCxcBoGylypLtWBeFu8iavBoXHR8s8FLWb1bjwoezcM4Qp0PV8Xwm4SHRUt1v+YNFSpfzuTlFw3kseybGTwAt7vXv3k1+5S7oMqTRppyUuCPY2Wrb2WHTY=
-        skip_cleanup: true
-        tag: next
-        on:
-          tags: true
-          # Deploy under @next if it's has a version prefix
-          condition: $TRAVIS_TAG =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)-([a-zA-Z]+)\.*.*$
+node_js: "node"
+
+env:
+  global:
+    - secure: "MY8H6IrWnL3tQABB7oNRy8ineswL8vg271SXx6tWXx0jZbyerjzH0idijLvievuWcE0YobNk9CGedrJ34hWOHvPKX40olA6O8g70lqNYuLhdQ7lsF8OWZ7xvsvtOQk8LzOw2OESaQ1lV7APM2HCRhKutiWqnkIKc9IbDvLohZJxRwx4yAaljJRS/vXe+x8qLgBxLUXnx+6pliwBo9+gOHbZW9jd4HeHSkmue4vFzqUk/C7U4Hl1KMna2GvYvP/eS9Oe/XUOrb2oRLAcNd0GR+pg9+afhZNx2VoF+kTsQEvCRPg9UOr2SN1xGNulyPXTl8XgvMlEmRMH21SCWueSnRSvxRaKr0qR0NWf9mZJZEe5HuZE36uyXm1w6ZjZcqZIkMlruUKe6d29zvwseoMawq7kV/PgyNGw5TM2WclK8ufMbdYzqGnXoP5K9GkAH51GSTLVYvpG/AxCc84Wt5jAri1fgwazVzyMBlYURkt0dkPPNIx+sMAG1mn72vppz+09WaHaUA/MuY/5c4+OjVw159XdZagaePARX7MY2A7Sn8rmeZ6Va9imzDaNzA36Mm+193gXtNlk/h0nUetpy1ekNG9Ha1dxzUhOrC4O/zZIYFe8PFh5bM7w+JvDJuuWMQqIzVfRqWwGRCYeNUipYYpXN3PJ5VahxabMm6JmznvN+Jf4="
+    - secure: "U/KqpNYFJPs5FxyMgkGTajftU9Th73Vi9Sp4LrX1LCeZervWUcVSZ73gSlvXZtLE7tKI9SB+c4w/MeCimYdfCNU+tz7virsEOXwUsVw+D7gFr4DWa5oI31a3xZKQG+v+AiT+xu17pEw/je78aK1HqN8Sve2HPMQgTa13tBr5sYfmWGqWhpFp6ndWNhqhcjIL7b7MZnKbh6MF+317XP6b7YQZLGDygXDYr3EbtEaS8N/6THTbqDRCnrUg6J9AW8PCT9TVBLfm3qCaQJzoJvKX0HChNl1eqeo+sEPw6uPrECbpzzyp9F17rgu+8/kgXn1rphy2z/kS3OEQD8otyaQpLWr5H3iSpzF5ZNhRqYgn8A7UR4Pxn/cH4qQlJh4K3O+N5EAM+Yi98pP0bdYJrrCLueZ1l4Lt3k67McBK6zSi/l+w8IDDevC7AiQk8hf76SN5g2kj5s4+klu2xorw5H2nHAIvKDI2kQ4aGSX3bb6VGr47m8mHk2cCj/VaatAmmkKfNJPzwqK95CbwASMJysvTHTNGD+1TuRxViIjvQj8btFsdEuMJM6ve7jeiIrx5A3Pi9Ge9uAKbUqMab6X8WpnQ1An6L2w3wTaqZaYES1zSGNMuN/6PpPxNvFXUUTDs+gP5542KMq0K9+Rz2//gOgvFJsaHpdxl9p6qe0hKCJwPtCM="
+deploy:
+  provider: script
+  skip_cleanup: true
+  script:
+    - npx semantic-release
