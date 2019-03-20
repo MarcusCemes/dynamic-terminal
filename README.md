@@ -201,7 +201,7 @@ Line objects can have three different properties:
 ### Spinners
 
 Spinners are cool. DT makes it easy to add one. The DT class exposes five constants that you can
-use. The spinener is the only dynamic element, it is a placeholder (currently `_*_`) that is
+use. The spinner is the only dynamic element, it is a placeholder (currently `_*_`) that is
 replaced with a spinner frame upon each render.
 
 ```javascript
@@ -314,7 +314,7 @@ active, it will be stopped and committed.
 dynamicTerminal.destroy();
 ```
 
-### dynamicTerminal.update( lines: *string | string[] | Line | Line[] ): *Promise\<boolean\>\*
+### dynamicTerminal.update( lines: *string | string[] | Line | Line[]* ): *Promise\<boolean\>*
 
 Replaces the entire contents of the terminal session. If the provided argument is not of type
 Line[], it will be manually converted. Line objects will also be split if screen wrapping would
@@ -327,7 +327,7 @@ await dynamicTerminal.update("line1line2");
 await dynamicTerminal.update(myLineObjectsArray);
 ```
 
-### dynamicTerminal.append( lines: *string | string[] | Line | Line[] ): *Promise\<boolean\>\*
+### dynamicTerminal.append( lines: *string | string[] | Line | Line[]* ): *Promise\<boolean\>*
 
 Appends to current open session. Quick and dirty, changes will be lost if the session is updated.
 
@@ -447,11 +447,18 @@ export DEBUG=DTT* // Linux
 
 ## Development
 
-You may clone the GitHub repository and build the project yourself.
-If you would like to contribute, make sure that you run the tests before submitting a Pull Request.
+You may clone and build the module yourself. Dynamic Terminal uses [Travis CI](https://travis-ci.com/MarcusCemes/dynamic-terminal) to run tests on all pushed changes, automatically deploying to npm when a significant operational change is made and all the tests have passed.
+Please make sure that your contributions pass tests before submitting a Pull Request, and that your commit messages follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0-beta.3/) specification.
 
-Deployment to NPM is automatic using Travis CD when a new tag version is released on **master**.
-The repository should never be manually published to NPM.
+<p align="center">
+  <a href="https://travis-ci.com/MarcusCemes/dynamic-terminal/branches">
+    <img src="https://img.shields.io/travis/com/MarcusCemes/dynamic-terminal/master.svg?label=MASTER&logo=travis&style=for-the-badge" alt="Build Status - master">
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://travis-ci.com/MarcusCemes/dynamic-terminal/branches">
+    <img src="https://img.shields.io/travis/com/MarcusCemes/dynamic-terminal/develop.svg?label=DEVELOP&logo=travis&style=for-the-badge" alt="Build Status - develop">
+  </a>
+</p>
 
 ## Built With
 
@@ -471,3 +478,22 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 This project is licensed under the **Apache 2.0** License - see the [LICENSE.md](LICENSE.md) file
 for details
+
+<!--
+Hidden section for better npms.io scoring, as it doesn't recognize HTML badges
+
+[![npm](https://img.shields.io/badge/npm-CB3837.svg?style=flat-square&logo=npm)](https://www.npmjs.com/package/dynamic-terminal)
+
+![Project name](https://img.shields.io/badge/Dynamic_Terminal-__💻-FFDC00.svg?style=flat-square)
+
+![License](https://img.shields.io/github/license/marcuscemes/dynamic-terminal.svg?style=flat-square)
+
+![Project size](https://img.shields.io/bundlephobia/min/dynamic-terminal.svg?style=flat-square&colorB=0074D9)
+
+![Make the web lighter](https://img.shields.io/badge/Make_the_web-nicer-7FDBFF.svg?style=flat-square)
+
+[![Build status - master](https://img.shields.io/travis/com/MarcusCemes/dynamic-terminal/master.svg?label=MASTER&logo=travis&style=for-the-badge)](https://travis-ci.com/MarcusCemes/dynamic-terminal/branches)
+
+[![Build status - master](https://img.shields.io/travis/com/MarcusCemes/dynamic-terminal/develop.svg?label=DEVELOP&logo=travis&style=for-the-badge)](https://travis-ci.com/MarcusCemes/dynamic-terminal/branches)
+
+-->
