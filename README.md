@@ -20,6 +20,9 @@
 
 <p align="center"><sub>Blame the GIF image for the stuttering</sub></p>
 
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FMarcusCemes%2Fdynamic-terminal.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FMarcusCemes%2Fdynamic-terminal?ref=badge_large)
+
 ## Features
 
 - ⚡ **Fast** - it repaints only what's changed since the last render
@@ -483,6 +486,7 @@ for details
 Hidden section for better npms.io scoring, as it doesn't recognize HTML badges
 
 [![npm](https://img.shields.io/badge/npm-CB3837.svg?style=flat-square&logo=npm)](https://www.npmjs.com/package/dynamic-terminal)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FMarcusCemes%2Fdynamic-terminal.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FMarcusCemes%2Fdynamic-terminal?ref=badge_shield)
 
 ![Project name](https://img.shields.io/badge/Dynamic_Terminal-__💻-FFDC00.svg?style=flat-square)
 
