@@ -52,7 +52,7 @@ export class DynamicTerminal {
       return false;
     }
     const response = await this.send({ cmd: "START", options });
-    if (response.status === "started") {
+    if (response && response.status === "started") {
       return true;
     }
     return false;
@@ -75,7 +75,7 @@ export class DynamicTerminal {
       return false;
     }
     const response = await this.send({ cmd: "STOP", commit });
-    if (response.status === "stopped") {
+    if (response && response.status === "stopped") {
       return true;
     }
     return false;
@@ -109,7 +109,7 @@ export class DynamicTerminal {
       return false;
     }
     const response = await this.send({ cmd: "UPDATE", text });
-    if (response.status === "updated") {
+    if (response && response.status === "updated") {
       return true;
     }
     return false;
@@ -130,7 +130,7 @@ export class DynamicTerminal {
       return false;
     }
     const response = await this.send({ cmd: "APPEND", text });
-    if (response.status === "appended") {
+    if (response && response.status === "appended") {
       return true;
     }
     return false;
@@ -150,7 +150,7 @@ export class DynamicTerminal {
       return false;
     }
     const response = await this.send({ cmd: "RENDER", force });
-    if (response.status === "rendered") {
+    if (response && response.status === "rendered") {
       return true;
     }
     return false;
@@ -167,7 +167,7 @@ export class DynamicTerminal {
       return [];
     }
     const response = await this.send({ cmd: "RENDER_QUEUE" });
-    if (response.status === "rendered") {
+    if (response && response.status === "rendered") {
       return response.data;
     }
     return [];
@@ -179,7 +179,7 @@ export class DynamicTerminal {
     return new Promise(resolve => {
       const id = uuid();
 
-      let timeoutTimer;
+      let timeoutTimer: NodeJS.Timeout;
 
       const handler = msg => {
         if (msg.uuid === id) {
