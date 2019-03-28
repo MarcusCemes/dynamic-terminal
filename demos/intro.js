@@ -2,7 +2,7 @@ const { DynamicTerminal } = require("../dist/main/index.js");
 const chalk = require("chalk");
 const figures = require('figures');
 
-const tt = new DynamicTerminal();
+const dt = new DynamicTerminal();
 
 const lines = [];
 
@@ -14,7 +14,7 @@ async function sleep(milliseconds) {
   try {
 
     process.stdout.write('\033c'); // Clear the screen
-    tt.start({ repaintOnResize: true });
+    dt.start({ repaintOnResize: true });
 
     for (let i=0; i<=6; i++)
       lines.push({ text: '', indent: '' });
@@ -84,7 +84,7 @@ async function sleep(milliseconds) {
     lines[3] = { text: chalk.green(DynamicTerminal.TICK) + " I didn't even need to do anything", indent: 4 };
     update();
     lines[4].indent = 4;
-    await progressBar(lines[4]).catch((err) => { tt.stop(); setTimeout( () => console.error(err), 2000); });
+    await progressBar(lines[4]).catch((err) => { dt.stop(); setTimeout( () => console.error(err), 2000); });
 
     lines[1] = { text: chalk.red(DynamicTerminal.CROSS) + " Damn. I didn't find any!", indent: 4 };
     update();
@@ -121,24 +121,24 @@ async function sleep(milliseconds) {
     await sleep(400);
 
 
-    await tt.update([{ text: `${chalk.green(figures.tick)} I'm done showing off.`, indent: 2 }, { text: "Let's see what you can do!", indent: 4 }]);
+    await dt.update([{ text: `${chalk.green(figures.tick)} I'm done showing off.`, indent: 2 }, { text: "Let's see what you can do!", indent: 4 }]);
     await sleep(500);
-    await tt.stop();
+    await dt.stop();
     await sleep(500);
-    tt.destroy();
+    dt.destroy();
 
   } catch (err) {
-    tt.stop();
+    dt.stop();
     console.error('Error in demo:');
     console.error(err);
-    tt.destroy();
+    dt.destroy();
     process.exit();
   }
 })();
 
 
 function update() {
-  tt.update(lines);
+  dt.update(lines);
 }
 
 function typeWriter(line, text, interval = 20) {
