@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import child_process from "child_process";
+import cluster from "cluster";
 import path from "path";
 import { v4 as uuid } from "uuid";
 
@@ -22,7 +22,7 @@ export class DynamicTerminal {
 
   public lastError: string;
 
-  private worker: child_process.ChildProcess = null;
+  private worker: cluster.Worker = null;
 
   constructor() {
     this.startWorker();
@@ -32,12 +32,15 @@ export class DynamicTerminal {
   public startWorker() {
     if (!this.worker) {
       try {
-        // If debugging, bind to a FREE port otherwise it will just fail silently...
-        const isDebug = /--debug|--inspect/.test(process.execArgv.join(' '));
-        this.worker = child_process.fork(path.join(__dirname, "/DynamicTerminalThread.js"), [], {
-          execArgv: isDebug ? ["--inspect=0"] : []
+        const clusterSettings = { ...cluster.settings }; // create a copy
+        cluster.setupMaster({
+          exec: path.join(__dirname, "/DynamicTerminalThread.js")
         });
-        if (!this.worker || !this.worker.connected) { throw null; }
+        this.worker = cluster.fork();
+        cluster.setupMaster(clusterSettings); // revert settings
+        if (!this.worker || !this.worker.isConnected()) {
+          throw null;
+        }
         this.worker.setMaxListeners(32); // Fast updates may exceed the default limit
         this.worker.once("disconnect", () => (this.worker = null));
       } catch (err) {
@@ -207,7 +210,9 @@ export class DynamicTerminal {
 
       worker.on("message", handler);
       worker.send({ ...data, uuid: id }, err => {
-        if (err) { reject(err); }
+        if (err) {
+          reject(err);
+        }
       });
     });
   }
