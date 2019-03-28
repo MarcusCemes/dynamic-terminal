@@ -119,7 +119,7 @@ class DynamicTerminalThread {
         ...options
       };
       this.wasRaw = process.stdin.isRaw;
-      if (options.disableInput) {
+      if (options.disableInput && process.stdout.isTTY) {
         process.stdin.setRawMode(true);
       }
 
@@ -170,7 +170,7 @@ class DynamicTerminalThread {
         process.stdout.write(ansi.eraseDown);
       }
 
-      if (this.wasRaw !== null) {
+      if (this.wasRaw !== null && process.stdout.isTTY) {
         process.stdin.setRawMode(this.wasRaw);
       }
       this.wasRaw = null;

@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import child_process from "child_process";
+import cluster from "cluster";
 import path from "path";
 import { v4 as uuid } from "uuid";
 
@@ -22,7 +22,7 @@ export class DynamicTerminal {
 
   public lastError: string;
 
-  private worker: child_process.ChildProcess = null;
+  private worker: cluster.Worker = null;
 
   constructor() {
     this.startWorker();
@@ -31,9 +31,21 @@ export class DynamicTerminal {
   /** Start the write worker if it's not already started. This is only necessary if you have called .destroy() */
   public startWorker() {
     if (!this.worker) {
-      this.worker = child_process.fork(path.join(__dirname, "/DynamicTerminalThread.js"));
-      this.worker.setMaxListeners(32); // Fast updates may exceed the default limit
-      this.worker.once("disconnect", () => (this.worker = null));
+      try {
+        const clusterSettings = { ...cluster.settings }; // create a copy
+        cluster.setupMaster({
+          exec: path.join(__dirname, "/DynamicTerminalThread.js")
+        });
+        this.worker = cluster.fork();
+        cluster.setupMaster(clusterSettings); // revert settings
+        if (!this.worker || !this.worker.isConnected()) {
+          throw null;
+        }
+        this.worker.setMaxListeners(32); // Fast updates may exceed the default limit
+        this.worker.once("disconnect", () => (this.worker = null));
+      } catch (err) {
+        throw new Error("Could not start a child process!\n" + err.message || err);
+      }
     }
   }
 
@@ -52,7 +64,7 @@ export class DynamicTerminal {
       return false;
     }
     const response = await this.send({ cmd: "START", options });
-    if (response.status === "started") {
+    if (response && response.status === "started") {
       return true;
     }
     return false;
@@ -75,7 +87,7 @@ export class DynamicTerminal {
       return false;
     }
     const response = await this.send({ cmd: "STOP", commit });
-    if (response.status === "stopped") {
+    if (response && response.status === "stopped") {
       return true;
     }
     return false;
@@ -109,7 +121,7 @@ export class DynamicTerminal {
       return false;
     }
     const response = await this.send({ cmd: "UPDATE", text });
-    if (response.status === "updated") {
+    if (response && response.status === "updated") {
       return true;
     }
     return false;
@@ -130,7 +142,7 @@ export class DynamicTerminal {
       return false;
     }
     const response = await this.send({ cmd: "APPEND", text });
-    if (response.status === "appended") {
+    if (response && response.status === "appended") {
       return true;
     }
     return false;
@@ -150,7 +162,7 @@ export class DynamicTerminal {
       return false;
     }
     const response = await this.send({ cmd: "RENDER", force });
-    if (response.status === "rendered") {
+    if (response && response.status === "rendered") {
       return true;
     }
     return false;
@@ -167,7 +179,7 @@ export class DynamicTerminal {
       return [];
     }
     const response = await this.send({ cmd: "RENDER_QUEUE" });
-    if (response.status === "rendered") {
+    if (response && response.status === "rendered") {
       return response.data;
     }
     return [];
@@ -176,10 +188,10 @@ export class DynamicTerminal {
   /** Sends a message with a uuid tag, and resolves when the correct UUID is returned */
   private async send(data: any, timeout: number = 10000): Promise<any> {
     const worker = this.worker;
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       const id = uuid();
 
-      let timeoutTimer;
+      let timeoutTimer: NodeJS.Timeout;
 
       const handler = msg => {
         if (msg.uuid === id) {
@@ -197,7 +209,11 @@ export class DynamicTerminal {
       timeoutTimer.unref();
 
       worker.on("message", handler);
-      worker.send({ ...data, uuid: id });
+      worker.send({ ...data, uuid: id }, err => {
+        if (err) {
+          reject(err);
+        }
+      });
     });
   }
 }
