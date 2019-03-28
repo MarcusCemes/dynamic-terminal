@@ -31,9 +31,18 @@ export class DynamicTerminal {
   /** Start the write worker if it's not already started. This is only necessary if you have called .destroy() */
   public startWorker() {
     if (!this.worker) {
-      this.worker = child_process.fork(path.join(__dirname, "/DynamicTerminalThread.js"));
-      this.worker.setMaxListeners(32); // Fast updates may exceed the default limit
-      this.worker.once("disconnect", () => (this.worker = null));
+      try {
+        // If debugging, bind to a FREE port otherwise it will just fail silently...
+        const isDebug = /--debug|--inspect/.test(process.execArgv.join(' '));
+        this.worker = child_process.fork(path.join(__dirname, "/DynamicTerminalThread.js"), [], {
+          execArgv: isDebug ? ["--inspect=0"] : []
+        });
+        if (!this.worker || !this.worker.connected) { throw null; }
+        this.worker.setMaxListeners(32); // Fast updates may exceed the default limit
+        this.worker.once("disconnect", () => (this.worker = null));
+      } catch (err) {
+        throw new Error("Could not start a child process!\n" + err.message || err);
+      }
     }
   }
 
@@ -176,7 +185,7 @@ export class DynamicTerminal {
   /** Sends a message with a uuid tag, and resolves when the correct UUID is returned */
   private async send(data: any, timeout: number = 10000): Promise<any> {
     const worker = this.worker;
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       const id = uuid();
 
       let timeoutTimer: NodeJS.Timeout;
@@ -197,7 +206,9 @@ export class DynamicTerminal {
       timeoutTimer.unref();
 
       worker.on("message", handler);
-      worker.send({ ...data, uuid: id });
+      worker.send({ ...data, uuid: id }, err => {
+        if (err) { reject(err); }
+      });
     });
   }
 }
