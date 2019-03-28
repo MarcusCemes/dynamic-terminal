@@ -7,13 +7,18 @@ import figures from "figures";
 import indentString from "indent-string";
 import os from "os";
 import stripAnsi from "strip-ansi";
-import windowSize from "window-size";
+import _windowSize from "window-size";
 import wrapAnsi from "wrap-ansi";
 
 import { ChangeAlgorithm } from "./ChangeAlgorithm";
 
 const defaultDebug = _debug("DTTCommand");
 const renderDebug = _debug("DTTRender");
+
+// Can return undefined if it can't be detected
+const windowSize = _windowSize
+  ? _windowSize
+  : { width: 80, height: 30, get: () => ({ width: 80, height: 30 }) };
 
 /**
  * A single line of terminal output.

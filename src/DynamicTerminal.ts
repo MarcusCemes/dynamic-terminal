@@ -183,14 +183,14 @@ export class DynamicTerminal {
 
       const handler = msg => {
         if (msg.uuid === id) {
-          worker.off("message", handler);
+          worker.removeListener("message", handler);
           clearTimeout(timeoutTimer);
           resolve(msg);
         }
       };
 
       timeoutTimer = setTimeout(() => {
-        worker.off("message", handler);
+        worker.removeListener("message", handler);
         this.lastError = "Communication timeout";
         resolve(null);
       }, timeout);
