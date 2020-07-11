@@ -1,3 +1,9 @@
+## ⛔ Deprecation notice
+
+As of 2020-07-11, this package is officially no longer maintained.
+
+The terminal is an old beast and shouldn't be pushed to far. This was an educational project, but there are too many edge cases and it's easy to break. If you would like an alternative, try [Ink](https://github.com/vadimdemedes/ink)!
+
 <h1 align="center">Dynamic Terminal</h1>
 
 <p align="center">
